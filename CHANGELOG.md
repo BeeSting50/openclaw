@@ -21,6 +21,7 @@ Docs: https://docs.openclaw.ai
 - Tools/Diffs: add a new optional `diffs` plugin tool for read-only diff rendering from before/after text or unified patches, with gateway viewer URLs for canvas and PNG image output. Thanks @gumadeiras.
 - Memory/LanceDB: support custom OpenAI `baseUrl` and embedding dimensions for LanceDB memory. (#17874) Thanks @rish2jain and @vincentkoc.
 - ACP/ACPX streaming: pin ACPX plugin support to `0.1.15`, add configurable ACPX command/version probing, and streamline ACP stream delivery (`final_only` default + reduced tool-event noise) with matching runtime and test updates. (#30036) Thanks @osolmaz.
+- Shell env markers: set `OPENCLAW_SHELL` across shell-like runtimes (`exec`, `acp`, `acp-client`, `tui-local`) so shell startup/config rules can target OpenClaw contexts consistently, and document the markers in env/exec/acp/TUI docs. Thanks @vincentkoc.
 - Cron/Heartbeat light bootstrap context: add opt-in lightweight bootstrap mode for automation runs (`--light-context` for cron agent turns and `agents.*.heartbeat.lightContext` for heartbeat), keeping only `HEARTBEAT.md` for heartbeat runs and skipping bootstrap-file injection for cron lightweight runs. (#26064) Thanks @jose-velez.
 - OpenAI/WebSocket warm-up: add optional OpenAI Responses WebSocket warm-up (`response.create` with `generate:false`), enable it by default for `openai/*`, and expose `params.openaiWsWarmup` for per-model enable/disable control.
 - Agents/Subagents runtime events: replace ad-hoc subagent completion system-message handoff with typed internal completion events (`task_completion`) that are rendered consistently across direct and queued announce paths, with gateway/CLI plumbing for structured `internalEvents`.
@@ -126,6 +127,7 @@ Docs: https://docs.openclaw.ai
 - Feishu/System preview prompt leakage: stop enqueuing inbound Feishu message previews as system events so user preview text is not injected into later turns as trusted `System:` context. Landed from contributor PR #31209 by @stakeswky. Thanks @stakeswky.
 - Feishu/Multi-account + reply reliability: add `channels.feishu.defaultAccount` outbound routing support with schema validation, keep quoted-message extraction text-first (post/interactive/file placeholders instead of raw JSON), route Feishu video sends as `msg_type: "file"`, and avoid websocket event blocking by using non-blocking event handling in monitor dispatch. Landed from contributor PRs #29610, #30432, #30331, and #29501. Thanks @hclsys, @bmendonca3, @patrick-yingxi-pan, and @zwffff.
 - Feishu/Typing replay suppression: skip typing indicators for stale replayed inbound messages after compaction using message-age checks with second/millisecond timestamp normalization, preventing old-message reaction floods while preserving typing for fresh messages. Landed from contributor PR #30709 by @arkyu2077. Thanks @arkyu2077.
+
 ## Unreleased
 
 ### Changes
