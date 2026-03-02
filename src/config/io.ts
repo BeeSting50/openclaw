@@ -1414,6 +1414,7 @@ export async function snapshotConfigBackupFile(): Promise<{
       error: "config invalid",
     };
   }
+  const rotatedPrimaryBackupPath = `${backupPath}.1`;
   try {
     await rotateConfigBackups(io.configPath, fs.promises);
     await fs.promises.copyFile(io.configPath, backupPath);
@@ -1426,6 +1427,30 @@ export async function snapshotConfigBackupFile(): Promise<{
       backupPath,
     };
   } catch (err) {
+    // If refresh fails after rotation, best-effort restore the previous immediate
+    // backup from .bak.1 so startup rollback still has a .bak candidate.
+    const backupExists = await fs.promises
+      .access(backupPath)
+      .then(() => true)
+      .catch(() => false);
+    if (!backupExists) {
+      const rotatedExists = await fs.promises
+        .access(rotatedPrimaryBackupPath)
+        .then(() => true)
+        .catch(() => false);
+      if (rotatedExists) {
+        try {
+          await fs.promises.rename(rotatedPrimaryBackupPath, backupPath);
+        } catch {
+          await fs.promises.copyFile(rotatedPrimaryBackupPath, backupPath).catch(() => {
+            // best-effort
+          });
+          await fs.promises.unlink(rotatedPrimaryBackupPath).catch(() => {
+            // best-effort
+          });
+        }
+      }
+    }
     return {
       ok: false,
       path: io.configPath,
