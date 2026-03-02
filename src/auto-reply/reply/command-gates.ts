@@ -21,7 +21,7 @@ export function rejectNonOwnerCommand(
   params: HandleCommandsParams,
   commandLabel: string,
 ): CommandHandlerResult | null {
-  if (params.command.ownerList.length === 0 || params.command.senderIsOwner) {
+  if (params.command.enforceExplicitOwners !== true || params.command.senderIsOwner) {
     return null;
   }
   logVerbose(

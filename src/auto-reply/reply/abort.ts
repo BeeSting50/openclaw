@@ -294,7 +294,7 @@ export async function tryFastAbortFromMessage(params: {
   if (!auth.isAuthorizedSender) {
     return { handled: false, aborted: false };
   }
-  if (auth.ownerList.length > 0 && !auth.senderIsOwner) {
+  if (auth.enforceExplicitOwners && !auth.senderIsOwner) {
     return { handled: false, aborted: false };
   }
 
